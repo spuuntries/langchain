@@ -97,7 +97,7 @@ class Petals(LLM, BaseModel):
 
             model_name = values["model_name"]
             values["tokenizer"] = BloomTokenizerFast.from_pretrained(model_name)
-            values["client"] = DistributedBloomForCausalLM.from_pretrained(model_name, request_timeout=300)
+            values["client"] = DistributedBloomForCausalLM.from_pretrained(model_name, request_timeout=300).to("cuda")
             values["huggingface_api_key"] = huggingface_api_key
 
         except ImportError:
@@ -134,7 +134,6 @@ class Petals(LLM, BaseModel):
         """Call the Petals API."""
         params = self._default_params
         inputs = self.tokenizer(prompt, return_tensors="pt")["input_ids"]
-        self.client.cuda()
         outputs = self.client.generate(inputs, **params)
         text = self.tokenizer.decode(outputs[0])
         if stop is not None:
