@@ -97,7 +97,7 @@ class Petals(LLM, BaseModel):
 
             model_name = values["model_name"]
             values["tokenizer"] = BloomTokenizerFast.from_pretrained(model_name)
-            values["client"] = DistributedBloomForCausalLM.from_pretrained(model_name)
+            values["client"] = DistributedBloomForCausalLM.from_pretrained(model_name, request_timeout=300)
             values["huggingface_api_key"] = huggingface_api_key
 
         except ImportError:
